@@ -1,0 +1,213 @@
+2021/11/01 08:52:30 getUpdates resp: 
+
+{
+	"ok":true,
+	"result":
+	[
+		{
+			"update_id":642833295,
+			"message":
+			{
+				"message_id":23,
+				"from":
+				{
+					"id":114899815,
+					"is_bot":false,
+					"first_name":"\u0418\u0433\u043e\u0440\u044c",
+					"username":"kanadez",
+					"language_code":"ru"
+				},
+				"chat":
+				{
+					"id":114899815,
+					"first_name":"\u0418\u0433\u043e\u0440\u044c",
+					"username":"kanadez",
+					"type":"private"
+				},
+				"date":1635745950,
+				"forward_from":
+				{
+					"id":261689769,
+					"is_bot":false,
+					"first_name":"Alexandr",
+					"username":"creattttter"
+				},
+				"forward_date":1635614619,
+				"text":"\u0433\u0443\u0434"
+			}
+		}
+	]
+}
+
+2021/11/01 08:52:30 getUpdates req : map[offset:[642833295] timeout:[60]]
+2021/11/01 08:52:30 getUpdates resp: 
+
+[
+	{
+		UpdateID:642833295 
+		Message:0xc4201f0000 
+		EditedMessage:<nil> 
+		ChannelPost:<nil> 
+		EditedChannelPost:<nil> 
+		InlineQuery:<nil> 
+		ChosenInlineResult:<nil> 
+		CallbackQuery:<nil> 
+		ShippingQuery:<nil> 
+		PreCheckoutQuery:<nil>
+	}
+
+]
+2021/11/01 08:52:30 [kanadez] гуд
+2021/11/01 08:52:30 sendMessage resp: 
+
+{
+	"ok":true,
+	"result":
+	{
+		"message_id":24,
+		"from":
+		{
+			"id":2023412819,
+			"is_bot":true,
+			"first_name":"TizerBot",
+			"username":"tizer_spb_bot"
+		},
+		"chat":
+		{
+			"id":114899815,
+			"first_name":"\u0418\u0433\u043e\u0440\u044c",
+			"username":"kanadez",
+			"type":"private"
+		},
+		"date":1635745950,
+		"reply_to_message":
+		{
+			"message_id":23,
+			"from":
+			{
+				"id":114899815,
+				"is_bot":false,
+				"first_name":"\u0418\u0433\u043e\u0440\u044c",
+				"username":"kanadez",
+				"language_code":"ru"
+			},
+			"chat":
+			{
+				"id":114899815,
+				"first_name":"\u0418\u0433\u043e\u0440\u044c",
+				"username":"kanadez",
+				"type":"private"
+			},
+			"date":1635745950,
+			"forward_from":
+			{
+				"id":261689769,
+				"is_bot":false,
+				"first_name":"Alexandr",
+				"username":"creattttter"
+			},
+			"forward_date":1635614619,
+			"text":"\u0433\u0443\u0434"
+		},
+		"text":"\u0433\u0443\u0434"
+	}
+}
+
+2021/11/01 08:52:30 sendMessage req : 
+
+map
+[
+	reply_to_message_id:[23] 
+	disable_notification:[false] 
+	text:[гуд] 
+	disable_web_page_preview:[false] 
+	chat_id:[114899815]
+]
+
+2021/11/01 08:52:30 sendMessage resp: 
+{
+	MessageID:24 
+	From:tizer_spb_bot 
+	Date:1635745950 
+	Chat:0xc4201422d0 
+	ForwardFrom: 
+	ForwardFromChat:<nil> 
+	ForwardFromMessageID:0 
+	ForwardDate:0 
+	ReplyToMessage:0xc420071800 
+	ViaBot: 
+	EditDate:0 
+	MediaGroupID: 
+	AuthorSignature: 
+	Text:гуд 
+	Entities:<nil> 
+	CaptionEntities:<nil> 
+	Audio:<nil> 
+	Document:<nil> 
+	Animation:<nil> 
+	Game:<nil> 
+	Photo:<nil> 
+	Sticker:<nil> 
+	Video:<nil> 
+	VideoNote:<nil> 
+	Voice:<nil> 
+	Caption: 
+	Contact:<nil> 
+	Location:<nil> 
+	Venue:<nil> 
+	NewChatMembers:<nil> 
+	LeftChatMember: 
+	NewChatTitle: 
+	NewChatPhoto:<nil> 
+	DeleteChatPhoto:false 
+	GroupChatCreated:false 
+	SuperGroupChatCreated:false 
+	ChannelChatCreated:false 
+	MigrateToChatID:0 
+	MigrateFromChatID:0 
+	PinnedMessage:<nil> 
+	Invoice:<nil> 
+	SuccessfulPayment:<nil> 
+	PassportData:<nil>
+}
+
+{
+   "ok":true,
+   "result":{
+      "message_id":204,
+      "from":{
+         "id":2023412819,
+         "is_bot":true,
+         "first_name":"TizerBot",
+         "username":"tizer_spb_bot"
+      },
+      "chat":{
+         "id":114899815,
+         "first_name":"\u0418\u0433\u043e\u0440\u044c",
+         "username":"kanadez",
+         "type":"private"
+      },
+      "date":1639025793,
+      "reply_to_message":{
+         "message_id":203,
+         "from":{
+            "id":114899815,
+            "is_bot":false,
+            "first_name":"\u0418\u0433\u043e\u0440\u044c",
+            "username":"kanadez",
+            "language_code":"ru"
+         },
+         "chat":{
+            "id":114899815,
+            "first_name":"\u0418\u0433\u043e\u0440\u044c",
+            "username":"kanadez",
+            "type":"private"
+         },
+         "date":1639025793,
+         "forward_sender_name":"Tilek Kubanov",
+         "forward_date":1636029379,
+         "text":"\u0422\u0443\u0442"
+      },
+      "text":"\u0422\u0443\u0442"
+   }
+}
