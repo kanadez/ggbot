@@ -1,0 +1,154 @@
+2021/11/01 08:39:58 getUpdates resp: 
+
+{
+	"ok":true,
+	"result":
+	[
+		{
+			"update_id":642833293,
+			"message":
+			{
+				"message_id":19,
+				"from":
+				{
+					"id":114899815,
+					"is_bot":false,
+					"first_name":"\u0418\u0433\u043e\u0440\u044c",
+					"username":"kanadez",
+					"language_code":"ru"
+				},
+				"chat":
+				{
+					"id":114899815,
+					"first_name":"\u0418\u0433\u043e\u0440\u044c",
+					"username":"kanadez",
+					"type":"private"
+				},
+				"date":1635745198,
+				"text":"1234"
+			}
+		}
+	]
+}
+
+2021/11/01 08:39:58 getUpdates req : map[timeout:[60]]
+2021/11/01 08:39:58 getUpdates resp: 
+
+[
+	{
+		UpdateID:642833293 
+		Message:0xc420071380 
+		EditedMessage:<nil> 
+		ChannelPost:<nil> 
+		EditedChannelPost:<nil> 
+		InlineQuery:<nil> 
+		ChosenInlineResult:<nil> 
+		CallbackQuery:<nil> 
+		ShippingQuery:<nil> 
+		PreCheckoutQuery:<nil>
+	}
+]
+
+2021/11/01 08:39:58 [kanadez] 1234
+2021/11/01 08:39:58 sendMessage resp: 
+
+{
+	"ok":true,
+	"result":
+	{
+		"message_id":20,
+		"from":
+		{
+			"id":2023412819,
+			"is_bot":true,
+			"first_name":"TizerBot",
+			"username":"tizer_spb_bot"
+		},
+		"chat":
+		{
+			"id":114899815,
+			"first_name":"\u0418\u0433\u043e\u0440\u044c",
+			"username":"kanadez",
+			"type":"private"
+		},
+		"date":1635745198,
+		"reply_to_message":
+		{
+			"message_id":19,
+			"from":
+			{
+				"id":114899815,
+				"is_bot":false,
+				"first_name":"\u0418\u0433\u043e\u0440\u044c",
+				"username":"kanadez",
+				"language_code":"ru"
+			},
+			"chat":
+			{
+				"id":114899815,
+				"first_name":"\u0418\u0433\u043e\u0440\u044c",
+				"username":"kanadez",
+				"type":"private"
+			},
+			"date":1635745198,
+			"text":"1234"
+		},
+		"text":"1234"
+	}
+}
+
+2021/11/01 08:39:58 sendMessage req : map
+[
+	disable_web_page_preview:[false] 
+	chat_id:[114899815] 
+	reply_to_message_id:[19] 
+	disable_notification:[false] 
+	text:[1234]
+]
+
+2021/11/01 08:39:58 sendMessage resp: 
+{
+	MessageID:20 
+	From:tizer_spb_bot 
+	Date:1635745198 
+	Chat:0xc4201421b0 
+	ForwardFrom: 
+	ForwardFromChat:<nil> 
+	ForwardFromMessageID:0 
+	ForwardDate:0 
+	ReplyToMessage:0xc420001c80 
+	ViaBot: 
+	EditDate:0 
+	MediaGroupID:
+	AuthorSignature: 
+	Text:1234 
+	Entities:<nil> 
+	CaptionEntities:<nil> 
+	Audio:<nil> 
+	Document:<nil> 
+	Animation:<nil> 
+	Game:<nil> 
+	Photo:<nil> 
+	Sticker:<nil> 
+	Video:<nil> 
+	VideoNote:<nil> 
+	Voice:<nil> 
+	Caption: 
+	Contact:<nil> 
+	Location:<nil> 
+	Venue:<nil> 
+	NewChatMembers:<nil> 
+	LeftChatMember: 
+	NewChatTitle: 
+	NewChatPhoto:<nil> 
+	DeleteChatPhoto:false 
+	GroupChatCreated:false 
+	SuperGroupChatCreated:false 
+	ChannelChatCreated:false 
+	MigrateToChatID:0 
+	MigrateFromChatID:0 
+	PinnedMessage:<nil> 
+	Invoice:<nil> 
+	SuccessfulPayment:<nil> 
+	PassportData:<nil>
+}
