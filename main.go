@@ -60,9 +60,15 @@ type Contact struct {
 	comments []*Comment
 }
 
+type User struct {
+	id            sql.NullInt64
+	telegram_id   sql.NullInt64
+	telegram_name sql.NullString
+}
+
 func findContact(search_query string) ([]*Contact, error) {
 
-	//log.Printf("findContact() search_query: %s", search_query)
+	log.Printf("\n\n\n findContact() search_query: %s \n\n\n", search_query)
 
 	if utf8.RuneCountInString(search_query) == 0 {
 		return nil, errors.New("search_query length is equals 0!")
@@ -251,6 +257,113 @@ func getContactCommentsPaginated(contact *Contact, current_page int) ([]*Comment
 	return comments, nil
 }
 
+func saveMessageToHistory(chat_id int64, telegram_id int, telegram_name string, message_id int, message_text string) error {
+	//Подключаемся к БД
+	db, err := sql.Open("postgres", dbInfo)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// здесь надо взять из базы users объект текущего телеграм-юзера, либо создать его, если в базе нет
+	user, err := getUserByTelegramId(telegram_id)
+	if err != nil {
+		fmt.Println("getUserByTelegramId() in saveMessageToHistory() err")
+		return err
+	}
+	if user == nil {
+		user, err = createUser(telegram_id, telegram_name)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
+
+	user_id, _ := user.id.Value()
+
+	query := `INSERT INTO messages_history(user_id, telegram_chat_id, telegram_message_id, telegram_message_text) VALUES($1, $2, $3, $4);`
+	result, err := db.Exec(query, fmt.Sprintf("%d", user_id), chat_id, message_id, message_text)
+	fmt.Println(result)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+func createUser(telegram_id int, telegram_name string) (*User, error) {
+	//Подключаемся к БД
+	db, err := sql.Open("postgres", dbInfo)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	lastInsertId := 0
+	query := `INSERT INTO users(telegram_id, telegram_name) VALUES($1, $2) RETURNING id;`
+	result := db.QueryRow(query, strconv.Itoa(telegram_id), telegram_name)
+	err = result.Scan(&lastInsertId)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("lastInsertId")
+	fmt.Println(lastInsertId)
+
+	user, err := getUserById(lastInsertId)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func getUserById(user_id int) (*User, error) {
+
+	//Подключаемся к БД
+	db, err := sql.Open("postgres", dbInfo)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	//Отправляем запрос в БД для подсчета числа уникальных пользователей
+	row := db.QueryRow("SELECT id, telegram_id, telegram_name FROM users WHERE id = $1;", user_id)
+	user := new(User)
+	switch err := row.Scan(&user.id, &user.telegram_id, &user.telegram_name); err {
+	case sql.ErrNoRows:
+		return nil, nil
+	case nil:
+		return user, nil
+	default:
+		return nil, err
+	}
+}
+
+func getUserByTelegramId(telegram_id int) (*User, error) {
+
+	//Подключаемся к БД
+	db, err := sql.Open("postgres", dbInfo)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	//Отправляем запрос в БД для подсчета числа уникальных пользователей
+	row := db.QueryRow("SELECT id, telegram_id, telegram_name FROM users WHERE telegram_id = $1;", telegram_id)
+	user := new(User)
+	switch err := row.Scan(&user.id, &user.telegram_id, &user.telegram_name); err {
+	case sql.ErrNoRows:
+		return nil, nil
+	case nil:
+		return user, nil
+	default:
+		panic(err)
+	}
+}
+
 // main.go ===========================================
 
 func main() {
@@ -352,7 +465,7 @@ func tgSimpleReply() {
 						tgbotapi.NewInlineKeyboardRow(
 							// /show_more_comments <contact_id> <total_pages> <current_page>
 							tgbotapi.NewInlineKeyboardButtonData("Показать больше отзывов", fmt.Sprintf("/show_more_comments %d %d %d", contact_id, int(total_pages), int(current_page)+1)),
-							tgbotapi.NewInlineKeyboardButtonData("Оставить отзыв", "/leave_feedback"),
+							tgbotapi.NewInlineKeyboardButtonData("Оставить отзыв", fmt.Sprintf("/leave_feedback %d", contact_id)),
 						),
 					)
 					msg.ReplyMarkup = numericKeyboard
@@ -365,13 +478,32 @@ func tgSimpleReply() {
 
 					numericKeyboardIfNoFeedback := tgbotapi.NewInlineKeyboardMarkup(
 						tgbotapi.NewInlineKeyboardRow(
-							tgbotapi.NewInlineKeyboardButtonData("Оставить отзыв", "/leave_feedback"),
+							tgbotapi.NewInlineKeyboardButtonData("Оставить отзыв", fmt.Sprintf("/leave_feedback %d", contact_id)),
 						),
 					)
 					msg.ReplyMarkup = numericKeyboardIfNoFeedback
 
 					bot.Send(msg)
 				}
+
+			case "/leave_feedback":
+				contact_id, err := strconv.Atoi(splitted_callback_with_arguments[1])
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				fmt.Printf("%d", contact_id)
+				//fmt.Printf("%+v", update.)
+
+				msg_text := "Напишите и отправьте текст отзыва:"
+				msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, msg_text)
+				msg.ParseMode = "markdown"
+
+				var force_reply = new(tgbotapi.ForceReply)
+				force_reply.ForceReply = true
+				msg.ForceReply = force_reply
+
+				bot.Send(msg)
 			}
 
 			continue
@@ -383,9 +515,33 @@ func tgSimpleReply() {
 
 		log.Print("===========================================================")
 		//log.Printf("update.Message.From.UserName: [%s], update.Message.Text: %s", update.Message.From.UserName, update.Message.Text)
-		log.Printf("update: %+v", update)
-		log.Printf("update.Message: %+v", update.Message)
-		log.Printf("update.Message.Chat: %+v", update.Message.Chat)
+		log.Printf("update: %+v \n\n\n", update)
+		log.Printf("update.Message: %+v \n\n\n", update.Message)
+		log.Printf("update.Message.From: %+v \n\n\n", update.Message.From)
+		log.Printf("update.Message.From.ID: %d \n\n\n", update.Message.From.ID)
+		log.Printf("update.Message.ForwardFrom: %+v \n\n\n", update.Message.ForwardFrom)
+		log.Printf("update.Message.ForwardSenderName: %+s \n\n\n", update.Message.ForwardSenderName)
+		log.Printf("update.Message.Chat: %+v \n\n\n", update.Message.Chat)
+
+		message_from_username := ""
+		if len(update.Message.From.UserName) > 0 {
+			message_from_username = update.Message.From.UserName
+		} else {
+			message_from_username := update.Message.From.FirstName
+			if update.Message.From.LastName != "" {
+				message_from_username += " " + update.Message.From.LastName
+			}
+		}
+		err := saveMessageToHistory(update.Message.Chat.ID, update.Message.From.ID, message_from_username, update.Message.MessageID, update.Message.Text)
+		if err != nil {
+			log.Println(err)
+		}
+
+		if update.Message.ReplyToMessage != nil {
+			log.Printf("update.Message.ReplyToMessage: %+v", update.Message.ReplyToMessage)
+
+			continue
+		}
 
 		//log.Print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 		search_query := update.Message.Text
@@ -396,8 +552,13 @@ func tgSimpleReply() {
 				//log.Printf("update.Message.ForwardFrom.UserName: %s\n", update.Message.ForwardFrom.UserName)
 				search_query = update.Message.ForwardFrom.UserName
 			} else {
+				name := update.Message.ForwardFrom.FirstName
+				if update.Message.ForwardFrom.LastName != "" {
+					name += " " + update.Message.ForwardFrom.LastName
+				}
+
 				//log.Printf("update.Message.ForwardFrom: %s\n", update.Message.ForwardFrom)
-				search_query = fmt.Sprintf("%v", update.Message.ForwardFrom)
+				search_query = fmt.Sprintf("%v", name)
 			}
 		} else if update.Message.ForwardSenderName != "" {
 			//log.Print("update.Message.ForwardSenderName != ''")
@@ -462,7 +623,7 @@ func tgSimpleReply() {
 
 			var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(
 				tgbotapi.NewInlineKeyboardRow(
-					tgbotapi.NewInlineKeyboardButtonData("Оставить отзыв", "/leave_feedback"),
+					tgbotapi.NewInlineKeyboardButtonData("Оставить отзыв", fmt.Sprintf("/leave_feedback %d", contact_id)),
 					tgbotapi.NewInlineKeyboardButtonData("Поставить оценку", "/rate"),
 				),
 			)
@@ -476,7 +637,7 @@ func tgSimpleReply() {
 						tgbotapi.NewInlineKeyboardButtonData("Показать больше отзывов", fmt.Sprintf("/show_more_comments %d %d 2", contact_id, int(comments_pages_count))),
 					),
 					tgbotapi.NewInlineKeyboardRow(
-						tgbotapi.NewInlineKeyboardButtonData("Оставить отзыв", "/leave_feedback"),
+						tgbotapi.NewInlineKeyboardButtonData("Оставить отзыв", fmt.Sprintf("/leave_feedback %d", contact_id)),
 						tgbotapi.NewInlineKeyboardButtonData("Поставить оценку", "/rate"),
 					),
 				)
