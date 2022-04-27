@@ -46,8 +46,8 @@ const MAX_MESSAGE_LEN = 1000
 var host = os.Getenv("HOST")
 var port = os.Getenv("PORT")
 var user = os.Getenv("USER")
-var password = os.Getenv("PASSWORD")
-var dbname = os.Getenv("DBNAME")
+var password = os.Getenv("GG_CHECK_BOT_PASSWORD")
+var dbname = os.Getenv("GG_CHECK_BOT_DBNAME")
 var sslmode = os.Getenv("SSLMODE")
 
 var dbInfo = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", host, port, user, password, dbname, sslmode)
@@ -561,7 +561,7 @@ func main() {
 //}
 
 func tgSimpleReply() {
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("GG_BOT_TOKEN"))
+	bot, err := tgbotapi.NewBotAPI(os.Getenv("GG_CHECK_BOT_TOKEN"))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -1004,7 +1004,7 @@ func escapeStringForMarkdown(str string) string {
 
 func tgSimpleReplyWithUpdates() {
 	//Создаем бота
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("GG_BOT_TOKEN"))
+	bot, err := tgbotapi.NewBotAPI(os.Getenv("GG_CHECK_BOT_TOKEN"))
 	if err != nil {
 		log.Panic(err)
 	}
