@@ -1,0 +1,7 @@
+package core
+
+const COMMENTS_PAGE_SIZE = 3
+const MAX_COMMENT_LEN = 1000
+const MAX_SEARCH_QUERY_LEN = 255
+const MAX_CONTACT_LEN = 255
+const MAX_MESSAGE_LEN = 1000
