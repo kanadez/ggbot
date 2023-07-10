@@ -14,52 +14,24 @@ import (
 )
 
 func main() {
-	tgSimpleReply()
+	runBot()
 }
 
-//func (logger BotLogger) Println(v string) string {
-//	fmt.Println("BotLogger Println'")
-//	fmt.Println(v)
-//}
-
-func tgSimpleReply() {
+func runBot() {
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("GG_CHECK_BOT_TOKEN"))
 	if err != nil {
 		log.Panic(err)
 	}
 
-	bot.Debug = true
-
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	/**
-	// Updates with Webhook start
-	_, err = bot.SetWebhook(tgbotapi.NewWebhook("https://metateg.site:88/ggbot-check"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	info, err := bot.GetWebhookInfo()
-	if err != nil {
-		log.Fatal(err)
-	}
-	if info.LastErrorDate != 0 {
-		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
-	}
-	updates := bot.ListenForWebhook("/ggbot-check")
-
-	go http.ListenAndServeTLS(":88", "ssl.pem", "ssl.key", nil)
-	// Updates with Webhook end
-	**/
-
+	bot.Debug = true
 	_, err = bot.RemoveWebhook()
-
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
-
 	updates, err := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-
 		// Перебираем коллбеки от юзера, т.е. нажатия на кнопки (к примеру)
 		if update.CallbackQuery != nil {
 			callback_with_arguments := update.CallbackQuery.Data
